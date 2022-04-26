@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Banuba SDK Web AR Simple Example</title>
+  </head>
+  <body>
+    <div id="webar"></div>
+    <script type="module">
+      import { Webcam, Effect, Player, Dom } from "./BanubaSDK.js"
+
+      const run = async () => {
+        const effects = await fetch("effects/list.json")
+          .then((r) => r.json())
+          .catch((e) => (console.warn(e), []))
+
+        const player = await Player.create({ clientToken: "PUT YOUR CLIENT TOKEN HERE" })
+
+        player.use(new Webcam())
+
+        for (const effect of effects) {
+          const btn = document.createElement("button")
+          btn.textContent = /effects\/(.*)\.zip/.exec(effect)[1]
+          btn.onclick = () => player.applyEffect(new Effect(effect))
+          document.body.prepend(btn)
+        }
+
+        Dom.render(player, "#webar")
+      }
+
+      run()
+    </script>
+  </body>
+</html>
